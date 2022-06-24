@@ -1,30 +1,43 @@
 ---
-title: "Class-2022-06-23"
+title: "Class-2022-06-23 - Billboard"
 author: "Jackson Roe"
 date: '2022-06-24'
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(billboard)
 ```
 
-```{r}
+```{r, include = FALSE, echo = FALSE}
 x <- wiki_hot_100s |> 
   as_tibble() |> 
   mutate(year = parse_number(year))
 #fixed year, made it a number 
 x
 #put this here to view the tibble
+
 ```
 
 ```{r}
 x |> 
   group_by(year) |>
   distinct(artist) |>
-  summarize(distinct_artists=n())
-  
-```
+  summarize(distinct_artists=n()) |>
+  select(year,distinct_artists) |> 
+  ggplot(aes(x = year,
+             y = distinct_artists)) +
+    geom_point() +
+    geom_smooth(method = "lm",
+                formula = y ~ x,
+                se = FALSE) +
+    theme_bw() + 
+    labs(title = "Distinct Artists by Year",
+         subtitle = "As time increases, the number of distinct artists increases", 
+         x = "Year", 
+         y = "Number of Distinct Artists") + 
+    scale_x_continuous(breaks = seq(1960, 2015, by = 5))
 
+```
